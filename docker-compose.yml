@@ -1,0 +1,38 @@
+version: "3.9"
+services:
+  hadoop:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hadoop-container
+    hostname: hadoop
+    ports:
+      - "9870:9870"   # Namenode Web UI
+      - "8088:8088"   # ResourceManager Web UI
+      - "9864:9864"   # Datanode Web UI
+      - "9866:9866"   # Datanode IPC
+      - "9867:9867"   # Datanode HTTP
+      - "9000:9000"   # HDFS
+      - "8030:8030"   # ResourceManager
+      - "8031:8031"   # ResourceManager Scheduler
+      - "8032:8032"   # ResourceManager Resource Tracker
+      - "8033:8033"   # ResourceManager Admin
+      - "8040:8040"   # NodeManager Web UI
+      - "8042:8042"   # NodeManager IPC
+      - "19888:19888" # JobHistory Web UI
+    volumes:
+      - ./data:/data     # For persistent HDFS data
+      - ./input:/input   # Local input directory
+      - ./output:/output # Local output directory
+      - ./src:/src       # For your Java/Python code
+      - ./hadoop-config:/usr/local/hadoop/etc/hadoop  # Custom configs
+    environment:
+      - HADOOP_PREFIX=/usr/local/hadoop
+      - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64
+    networks:
+      - hadoop-net
+
+
+networks:
+  hadoop-net:
+    driver: bridge
